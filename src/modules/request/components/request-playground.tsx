@@ -27,14 +27,20 @@ export default function PlaygroundPage() {
       return {
         name: "Untitled Request",
         method: REST_METHOD.GET as REST_METHOD,
-        url: env.NEXT_PUBLIC_DEFAULT_API_ENDPOINT_URL
+        url: env.NEXT_PUBLIC_DEFAULT_API_ENDPOINT_URL,
+        body: undefined,
+        headers: undefined,
+        parameters: undefined,
       };
     }
 
     return {
       name: activeTab.title || "Untitled Request",
       method: (activeTab.method as REST_METHOD) || REST_METHOD.GET,
-      url: activeTab.url || env.NEXT_PUBLIC_DEFAULT_API_ENDPOINT_URL || " "
+      url: activeTab.url || env.NEXT_PUBLIC_DEFAULT_API_ENDPOINT_URL || " ",
+      body: activeTab.body,
+      headers: activeTab.headers,
+      parameters: activeTab.parameters,
     };
   };
 

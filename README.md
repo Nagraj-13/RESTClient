@@ -61,8 +61,8 @@ It provides a sleek UI and developer-focused workflow to test and manage REST AP
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Aestheticsuraj234/postman-clone
-cd postman-clone
+git clone https://github.com/Nagraj-13/RESTClient
+cd RESTClient
 ````
 
 ### 2. Install Dependencies

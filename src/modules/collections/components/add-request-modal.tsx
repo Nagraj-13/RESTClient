@@ -1,7 +1,7 @@
 "use client";
 
 import Modal from "@/components/ui/modal";
-import { Folder, Plus, Search, X } from "lucide-react";
+import { Folder, Link, Plus, Search, X } from "lucide-react";
 import React, { useState, useEffect, act } from "react";
 import { toast } from "sonner";
 import {
@@ -32,6 +32,9 @@ const SaveRequestToCollectionModal = ({
     name: string;
     method: REST_METHOD;
     url: string;
+    body?: string;
+    headers?: string;
+    parameters?: string;
   };
   initialName?: string;
   collectionId?: string;
@@ -103,6 +106,9 @@ const SaveRequestToCollectionModal = ({
         url: requestUrl.trim(),
         method: requestData.method,
         name: requestName.trim(),
+        body: requestData.body,
+        headers: requestData.headers,
+        parameters: requestData.parameters,
       });
 
       toast.success(
@@ -249,10 +255,10 @@ const SaveRequestToCollectionModal = ({
 
         {/* URL Preview (Optional) */}
         <div className="relative mb-3">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-zinc-500" />
+            <Link className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-zinc-500" />
             <Input
               type="text"
-              placeholder="Search"
+              placeholder="Enter request URL..."
               className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-10 pr-4 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               value={requestUrl}
               onChange={(e) => setRequestUrl(e.target.value)}
