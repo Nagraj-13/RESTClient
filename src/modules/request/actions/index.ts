@@ -254,3 +254,40 @@ export async function runDirect(requestData: {
     };
   }
 }
+
+
+export async function runUnsavedRequest(requestData: {
+  method: string;
+  url: string;
+  headers?: Record<string, string>;
+  parameters?: Record<string, any>;
+  body?: any;
+}) {
+  const requestConfig = {
+    method: requestData.method,
+    url: requestData.url,
+    headers: requestData.headers,
+    params: requestData.parameters,
+    body: requestData.body,
+  };
+
+  const result = await sendRequest(requestConfig);
+
+  return {
+    success: !result.error,
+    requestRun: {
+      id: "unsaved",
+      status: result.status || 0,
+      statusText: result.statusText || (result.error ? "Error" : null),
+      headers: result.headers || {},
+      body: result.data
+        ? typeof result.data === "string"
+          ? result.data
+          : JSON.stringify(result.data)
+        : result.error || null,
+      durationMs: result.duration || 0,
+      createdAt: new Date().toISOString(),
+    },
+    result,
+  };
+}
