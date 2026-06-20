@@ -4,48 +4,62 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { signUp } from "@/lib/auth-client";
 import { signIn } from "@/lib/auth-client";
-import { Chrome, Github, Loader2, Mail, Lock, Eye, EyeOff, Unplug } from "lucide-react";
+import { Chrome, Github, Loader2, User, Mail, Lock, Eye, EyeOff, Unplug } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-const LoginPage = () => {
+export default function SignUpPage() {
   const router = useRouter();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignIn = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!name.trim()) {
+      toast.error("Please enter your name");
+      return;
+    }
 
     if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
       toast.error("Please enter a valid email address");
       return;
     }
 
-    if (!password) {
-      toast.error("Please enter your password");
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
       return;
     }
 
     setIsLoading(true);
     try {
-      const { data, error } = await signIn.email({
+      const { data, error } = await signUp.email({
         email,
         password,
+        name,
       });
 
       if (error) {
-        toast.error(error.message || "Invalid email or password");
+        toast.error(error.message || "Failed to create account");
       } else {
-        toast.success("Welcome back!");
+        toast.success("Account created successfully!");
         router.push("/");
         router.refresh();
       }
     } catch (err) {
-      console.error("Sign in error:", err);
+      console.error("Signup error:", err);
       toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
@@ -85,13 +99,32 @@ const LoginPage = () => {
                 RESTClient
               </span>
             </Link>
-            <h2 className="mb-1 text-2xl font-semibold tracking-tight text-white">Sign in to RESTClient</h2>
+            <h2 className="mb-1 text-2xl font-semibold tracking-tight text-white">Create your account</h2>
             <p className="text-sm text-zinc-400">
-              Welcome back! Sign in to continue your work
+              Sign up to start building and testing APIs
             </p>
           </div>
 
-          <form onSubmit={handleSignIn} className="space-y-4">
+          <form onSubmit={handleSignUp} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-zinc-300">Full Name</Label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
+                  <User className="h-4 w-4" />
+                </span>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="John Doe"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  disabled={isLoading}
+                  className="pl-9 bg-zinc-950/50 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-indigo-500/50"
+                  required
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="email" className="text-zinc-300">Email address</Label>
               <div className="relative">
@@ -112,9 +145,7 @@ const LoginPage = () => {
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-zinc-300">Password</Label>
-              </div>
+              <Label htmlFor="password" className="text-zinc-300">Password</Label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
                   <Lock className="h-4 w-4" />
@@ -142,6 +173,28 @@ const LoginPage = () => {
                   )}
                 </button>
               </div>
+              <p className="text-[11px] text-zinc-500">
+                Must be at least 6 characters.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="text-zinc-300">Confirm Password</Label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
+                  <Lock className="h-4 w-4" />
+                </span>
+                <Input
+                  id="confirmPassword"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={isLoading}
+                  className="pl-9 bg-zinc-950/50 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-indigo-500/50"
+                  required
+                />
+              </div>
             </div>
 
             <Button
@@ -152,10 +205,10 @@ const LoginPage = () => {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
+                  Creating account...
                 </>
               ) : (
-                "Sign In"
+                "Create Account"
               )}
             </Button>
           </form>
@@ -165,7 +218,7 @@ const LoginPage = () => {
               <span className="w-full border-t border-zinc-850" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-zinc-900/60 px-2 text-zinc-500">Or continue with</span>
+              <span className="bg-zinc-900/60 px-2 text-zinc-500">Or sign up with</span>
             </div>
           </div>
 
@@ -193,18 +246,16 @@ const LoginPage = () => {
           </div>
 
           <p className="mt-6 text-center text-sm text-zinc-400">
-            Don't have an account?{" "}
+            Already have an account?{" "}
             <Link
-              href="/sign-up"
+              href="/sign-in"
               className="font-medium text-indigo-400 hover:text-indigo-300 underline underline-offset-4 transition-colors"
             >
-              Sign up
+              Sign in
             </Link>
           </p>
         </div>
       </div>
     </section>
   );
-};
-
-export default LoginPage;
+}
