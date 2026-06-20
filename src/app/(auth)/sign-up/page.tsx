@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signUp } from "@/lib/auth-client";
 import { signIn } from "@/lib/auth-client";
-import { Chrome, Github, Loader2, User, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Chrome, Github, Loader2, User, Mail, Lock, Eye, EyeOff, Unplug } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -81,26 +81,35 @@ export default function SignUpPage() {
   };
 
   return (
-    <section className="flex min-h-screen bg-zinc-50 dark:bg-transparent px-4 py-12 md:py-24">
-      <div className="bg-card m-auto h-fit w-full max-w-md rounded-xl border p-1 shadow-lg transition-all duration-300 hover:shadow-xl dark:border-zinc-800">
+    <section className="flex min-h-screen bg-zinc-950 text-zinc-100 px-4 py-12 md:py-24 relative overflow-hidden font-sans">
+      {/* Background Gradients */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-500/10 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-violet-600/10 blur-[120px]" />
+      </div>
+
+      <div className="bg-zinc-900/60 backdrop-blur-xl m-auto h-fit w-full max-w-md rounded-2xl border border-zinc-800 p-1 shadow-2xl transition-all duration-300 hover:shadow-indigo-500/5 relative z-10">
         <div className="p-8">
           <div className="text-center md:text-left mb-6">
-            <Link href="/" className="inline-block">
-              <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">
-                Postman
-              </h1>
+            <Link href="/" className="inline-flex items-center space-x-3 mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 shadow-inner">
+                <Unplug size={22} className="animate-pulse" />
+              </div>
+              <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+                RESTClient
+              </span>
             </Link>
-            <h2 className="mb-1 mt-4 text-2xl font-semibold tracking-tight">Create your account</h2>
-            <p className="text-sm text-muted-foreground">
+            <h2 className="mb-1 text-2xl font-semibold tracking-tight text-white">Create your account</h2>
+            <p className="text-sm text-zinc-400">
               Sign up to start building and testing APIs
             </p>
           </div>
 
           <form onSubmit={handleSignUp} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="name" className="text-zinc-300">Full Name</Label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
                   <User className="h-4 w-4" />
                 </span>
                 <Input
@@ -110,16 +119,16 @@ export default function SignUpPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   disabled={isLoading}
-                  className="pl-9"
+                  className="pl-9 bg-zinc-950/50 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-indigo-500/50"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email address</Label>
+              <Label htmlFor="email" className="text-zinc-300">Email address</Label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
                   <Mail className="h-4 w-4" />
                 </span>
                 <Input
@@ -129,16 +138,16 @@ export default function SignUpPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
-                  className="pl-9"
+                  className="pl-9 bg-zinc-950/50 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-indigo-500/50"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-zinc-300">Password</Label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
                   <Lock className="h-4 w-4" />
                 </span>
                 <Input
@@ -148,13 +157,13 @@ export default function SignUpPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
-                  className="pl-9 pr-9"
+                  className="pl-9 pr-9 bg-zinc-950/50 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-indigo-500/50"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-zinc-500 hover:text-zinc-300 transition-colors"
                   disabled={isLoading}
                 >
                   {showPassword ? (
@@ -164,15 +173,15 @@ export default function SignUpPage() {
                   )}
                 </button>
               </div>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-[11px] text-zinc-500">
                 Must be at least 6 characters.
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword" className="text-zinc-300">Confirm Password</Label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
                   <Lock className="h-4 w-4" />
                 </span>
                 <Input
@@ -182,7 +191,7 @@ export default function SignUpPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   disabled={isLoading}
-                  className="pl-9"
+                  className="pl-9 bg-zinc-950/50 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-indigo-500/50"
                   required
                 />
               </div>
@@ -190,7 +199,7 @@ export default function SignUpPage() {
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-medium shadow-md transition-all duration-200"
+              className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30 transition-all duration-200 rounded-xl cursor-pointer"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -206,10 +215,10 @@ export default function SignUpPage() {
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t dark:border-zinc-800" />
+              <span className="w-full border-t border-zinc-850" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">Or sign up with</span>
+              <span className="bg-zinc-900/60 px-2 text-zinc-500">Or sign up with</span>
             </div>
           </div>
 
@@ -217,7 +226,7 @@ export default function SignUpPage() {
             <Button
               variant="outline"
               type="button"
-              className="w-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              className="w-full border-zinc-800 hover:bg-zinc-800/80 hover:text-white transition-colors text-zinc-300 cursor-pointer"
               onClick={() => handleSocialSignIn("github")}
               disabled={isLoading}
             >
@@ -227,7 +236,7 @@ export default function SignUpPage() {
             <Button
               variant="outline"
               type="button"
-              className="w-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              className="w-full border-zinc-800 hover:bg-zinc-800/80 hover:text-white transition-colors text-zinc-300 cursor-pointer"
               onClick={() => handleSocialSignIn("google")}
               disabled={isLoading}
             >
@@ -236,11 +245,11 @@ export default function SignUpPage() {
             </Button>
           </div>
 
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <p className="mt-6 text-center text-sm text-zinc-400">
             Already have an account?{" "}
             <Link
               href="/sign-in"
-              className="font-medium text-orange-500 hover:text-orange-600 underline underline-offset-4 transition-colors"
+              className="font-medium text-indigo-400 hover:text-indigo-300 underline underline-offset-4 transition-colors"
             >
               Sign in
             </Link>
