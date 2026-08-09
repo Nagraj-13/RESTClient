@@ -69,6 +69,18 @@ const KeyValueFormEditor: React.FC<KeyValueFormEditorProps> = ({
     },
   });
 
+  useEffect(() => {
+    form.reset({
+      items:
+        initialData.length > 0
+          ? initialData.map((item) => ({
+              ...item,
+              enabled: item.enabled ?? true,
+            }))
+          : [{ key: "", value: "", enabled: true }],
+    });
+  }, [initialData, form]);
+
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "items",
