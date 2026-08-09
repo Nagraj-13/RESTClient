@@ -27,19 +27,19 @@ const Page = () => {
 
 return (
   <ResizablePanelGroup direction="horizontal">
- 
-     <ResizablePanel defaultSize={65} minSize={40}>
-        <RequestPlayground />
-    </ResizablePanel>
-
-    <ResizableHandle withHandle />
-       <ResizablePanel defaultSize={35} maxSize={40} minSize={25} className="flex">
+    <ResizablePanel defaultSize={35} maxSize={40} minSize={25} className="flex">
       <div className="flex-1">
         <TabbedSidebar currentWorkspace={currentWorkspace} />
       </div>
     </ResizablePanel>
+
+    <ResizableHandle withHandle />
+
+    <ResizablePanel defaultSize={65} minSize={40}>
+      <RequestPlayground />
+    </ResizablePanel>
   </ResizablePanelGroup>
-)
+);
 };
 
 export default Page;

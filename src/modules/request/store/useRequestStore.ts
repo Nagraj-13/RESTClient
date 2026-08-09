@@ -25,6 +25,7 @@ export type RequestTab = {
   requestId?: string; // 👈 link to DB request
   collectionId?: string;
   workspaceId?: string;
+  responseViewerData?: any;
 };
 
 type PlaygroundState = {
@@ -42,7 +43,7 @@ type PlaygroundState = {
 };
 
 const defaultTabId = nanoid();
-const defaultUrl = process.env.NEXT_PUBLIC_DEFAULT_API_ENDPOINT_URL || "https://echo.hoppscotch.io";
+const defaultUrl = process.env.NEXT_PUBLIC_DEFAULT_API_ENDPOINT_URL || "https://bored-api.appbrewery.com/random";
 
 export const useRequestPlaygroundStore = create<PlaygroundState>((set) => ({
   responseViewerData: null,

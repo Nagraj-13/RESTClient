@@ -56,7 +56,7 @@ export interface RunRequestInput {
 }
 
 export function useRunRequest() {
-  const { setResponseViewerData } = useRequestPlaygroundStore();
+  const { setResponseViewerData, activeTabId, updateTab } = useRequestPlaygroundStore();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -113,6 +113,9 @@ export function useRunRequest() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["requests"] });
       setResponseViewerData(data as any);
+      if (activeTabId) {
+        updateTab(activeTabId, { responseViewerData: data as any });
+      }
     },
   });
 }
