@@ -71,13 +71,24 @@ export async function sendRequest(req: {
   params?: Record<string, string>;
   body?: any;
 }) {
+  let targetUrl = req.url?.trim() || "";
+  if (targetUrl && !/^https?:\/\//i.test(targetUrl)) {
+    targetUrl = `https://${targetUrl}`;
+  }
+
+  const headers: Record<string, string> = {
+    "User-Agent": "PostmanRuntime/7.39.0",
+    "Accept": "*/*",
+    ...(req.headers || {}),
+  };
+
   const config: AxiosRequestConfig = {
     method: req.method,
-    url: req.url,
-    headers: req.headers,
+    url: targetUrl,
+    headers,
     params: req.params,
     data: req.body,
-    validateStatus: () => true, // ✅ capture errors too
+    validateStatus: () => true, // ✅ capture all status codes (2xx, 4xx, 5xx) without throwing
   };
 
   const start = performance.now();
@@ -88,14 +99,12 @@ export async function sendRequest(req: {
     const duration = end - start;
     const size =
       res.headers["content-length"] ||
-      new TextEncoder().encode(JSON.stringify(res.data)).length;
+      new TextEncoder().encode(typeof res.data === "object" ? JSON.stringify(res.data) : String(res.data)).length;
 
-    console.log(res.data);
-    
     return {
       status: res.status,        
       statusText: res.statusText, 
-        headers: Object.fromEntries(Object.entries(res.headers)),      
+      headers: Object.fromEntries(Object.entries(res.headers)),      
       data: res.data,            
       duration: Math.round(duration),
       size,
@@ -103,7 +112,9 @@ export async function sendRequest(req: {
   } catch (error: any) {
     const end = performance.now();
     return {
-      error: error.message,
+      error: error.message || "Network Error",
+      status: error.response?.status || 0,
+      statusText: error.response?.statusText || "Failed",
       duration: Math.round(end - start),
     };
   }
@@ -254,3 +265,40 @@ export async function runDirect(requestData: {
     };
   }
 }
+
+
+export async function runUnsavedRequest(requestData: {
+  method: string;
+  url: string;
+  headers?: Record<string, string>;
+  parameters?: Record<string, any>;
+  body?: any;
+}) {
+  const requestConfig = {
+    method: requestData.method,
+    url: requestData.url,
+    headers: requestData.headers,
+    params: requestData.parameters,
+    body: requestData.body,
+  };
+
+  const result = await sendRequest(requestConfig);
+
+  return {
+    success: !result.error,
+    requestRun: {
+      id: "unsaved",
+      status: result.status || 0,
+      statusText: result.statusText || (result.error ? "Error" : null),
+      headers: result.headers || {},
+      body: result.data
+        ? typeof result.data === "string"
+          ? result.data
+          : JSON.stringify(result.data)
+        : result.error || null,
+      durationMs: result.duration || 0,
+      createdAt: new Date().toISOString(),
+    },
+    result,
+  };
+}

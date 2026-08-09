@@ -25,6 +25,7 @@ export type RequestTab = {
   requestId?: string; // 👈 link to DB request
   collectionId?: string;
   workspaceId?: string;
+  responseViewerData?: any;
 };
 
 type PlaygroundState = {
@@ -35,26 +36,28 @@ type PlaygroundState = {
   setActiveTab: (id: string) => void;
   updateTab: (id: string, data: Partial<RequestTab>) => void;
   markUnsaved: (id: string, value: boolean) => void;
-  openRequestTab: (req: any) => void; // 👈 new
+  openRequestTab: (req: any) => void;
   updateTabFromSavedRequest: (tabId: string, savedRequest: SavedRequest) => void;
-  responseViewerData:ResponseData | null;
-  setResponseViewerData: (data:ResponseData) => void
+  responseViewerData: ResponseData | null;
+  setResponseViewerData: (data: ResponseData) => void;
 };
 
+const defaultTabId = nanoid();
+const defaultUrl = process.env.NEXT_PUBLIC_DEFAULT_API_ENDPOINT_URL || "https://bored-api.appbrewery.com/random";
+
 export const useRequestPlaygroundStore = create<PlaygroundState>((set) => ({
-  responseViewerData:null,
+  responseViewerData: null,
   setResponseViewerData: (data) => set({ responseViewerData: data }),
   tabs: [
     {
-      id: nanoid(),
+      id: defaultTabId,
       title: "Request",
       method: "GET",
-      url: "https://echo.hoppscotch.io",
+      url: defaultUrl,
       unsavedChanges: false,
-      
     },
   ],
-  activeTabId: null,
+  activeTabId: defaultTabId,
 
   addTab: () =>
     set((state) => {
@@ -62,16 +65,15 @@ export const useRequestPlaygroundStore = create<PlaygroundState>((set) => ({
         id: nanoid(),
         title: "Untitled",
         method: "GET",
-        url: "",
+        url: defaultUrl,
         body: "",
         headers: "",
         parameters: "",
         unsavedChanges: true,
       };
       return {
-        tabs: [...state.tabs, newTab ],
+        tabs: [...state.tabs, newTab],
         activeTabId: newTab.id,
-
       };
     }),
 

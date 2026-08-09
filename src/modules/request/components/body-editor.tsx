@@ -73,12 +73,21 @@ const BodyEditor: React.FC<BodyEditorProps> = ({
     },
   })
 
+  useEffect(() => {
+    form.reset({
+      contentType: initialData.contentType || 'application/json',
+      body: initialData.body || ''
+    });
+  }, [initialData.body, initialData.contentType]);
+
   const contentType = form.watch('contentType')
   const bodyValue = form.watch('body')
 
-  // Handle editor value changes
+  // Handle editor value changes and auto-update tab state
   const handleEditorChange = (value?: string) => {
-    form.setValue('body', value || '', { shouldValidate: true })
+    const newBody = value || ''
+    form.setValue('body', newBody, { shouldValidate: true })
+    onSubmit({ contentType: form.getValues('contentType'), body: newBody })
   }
 
   // Handle copy

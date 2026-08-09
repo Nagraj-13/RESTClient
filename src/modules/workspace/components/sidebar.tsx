@@ -1,6 +1,8 @@
 import { Button } from '@/components/ui/button';
-import { Archive, Clock, Code, Share2, ExternalLink, HelpCircle, Plus, Search, Upload, Loader } from 'lucide-react';
+import { Archive, Clock, Code, Share2, ExternalLink, HelpCircle, Plus, Search, Upload, Loader, Link as LinkIcon, Globe } from 'lucide-react';
 import React, { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import CreateCollection from '../../collections/components/create-collection';
 import { useCollections } from '@/modules/collections/hooks/collections';
 import EmptyCollections from '../../collections/components/empty-collections';
@@ -12,18 +14,24 @@ interface Props {
 }
 
 const TabbedSidebar = ({ currentWorkspace }: Props) => {
+  const pathname = usePathname();
+  const activeProtocol = pathname?.startsWith('/realtime') ? 'realtime' : 'rest';
+
   const [activeTab, setActiveTab] = useState('Collections');
   const [isModalOpen, setIsModalOpen] = useState(false); 
 
   const {data:collections , isLoading, isError} = useCollections(currentWorkspace?.id);
 
-  
- 
   if(isLoading) return (
-    <div className="flex-1 flex items-center justify-center">
+    <div className="flex-1 flex items-center justify-center bg-zinc-900 h-full">
       <Loader className="w-6 h-6 text-indigo-400 animate-spin" />
     </div>
   )
+
+  const protocolItems = [
+    { icon: LinkIcon, label: 'REST', link: '/', id: 'rest' },
+    { icon: Globe, label: 'Realtime', link: '/realtime', id: 'realtime' },
+  ];
 
   const sidebarItems = [
     { icon: Archive, label: 'Collections' },
@@ -90,33 +98,54 @@ const TabbedSidebar = ({ currentWorkspace }: Props) => {
   };
 
   return (
-    <div className="flex h-screen bg-zinc-900">
-      {/* Sidebar */}
-      <div className="w-12 bg-zinc-900 border-r border-zinc-800 flex flex-col items-center py-4 space-y-4">
-        {sidebarItems.map((item, index) => (
-          <div
-            key={index}
-            onClick={() => setActiveTab(item.label)}
-            className={`w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer transition-colors ${
-              activeTab === item.label
-                ? 'bg-indigo-600 text-white'
-                : 'text-zinc-400 hover:text-zinc-300 hover:bg-zinc-800'
-            }`}
-          >
-            <item.icon className="w-4 h-4" />
-          </div>
-        ))}
+    <div className="flex flex-col h-full bg-zinc-900 border-r border-zinc-800">
+      {/* Top Protocol Tabs (REST / Realtime) */}
+      <div className="flex items-center border-b border-zinc-800 bg-zinc-950 px-3 py-2 gap-2">
+        {protocolItems.map((item) => {
+          const isActive = activeProtocol === item.id;
+          return (
+            <Link
+              key={item.id}
+              href={item.link}
+              className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                isActive
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60'
+              }`}
+            >
+              <item.icon className="w-3.5 h-3.5" />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
       </div>
 
-      <div className="flex-1 bg-zinc-900 overflow-y-auto">{renderTabContent()}</div>
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <div className="w-12 bg-zinc-900 border-r border-zinc-800 flex flex-col items-center py-4 space-y-4">
+          {sidebarItems.map((item, index) => (
+            <div
+              key={index}
+              onClick={() => setActiveTab(item.label)}
+              className={`w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer transition-colors ${
+                activeTab === item.label
+                  ? 'bg-indigo-600 text-white'
+                  : 'text-zinc-400 hover:text-zinc-300 hover:bg-zinc-800'
+              }`}
+            >
+              <item.icon className="w-4 h-4" />
+            </div>
+          ))}
+        </div>
 
-    
+        <div className="flex-1 bg-zinc-900 overflow-y-auto">{renderTabContent()}</div>
+      </div>
+
       <CreateCollection
         workspaceId={currentWorkspace?.id}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
       />
-      
     </div>
   );
 };

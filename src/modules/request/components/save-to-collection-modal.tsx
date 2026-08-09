@@ -20,7 +20,7 @@ const SaveRequestToCollectionModal = ({
   collectionId: string;
   initialName: string;
 }) => {
-  const [url, setUrl] = useState("https://echo.hoppscotch.io");
+  const [url, setUrl] = useState(process.env.NEXT_PUBLIC_DEFAULT_API_ENDPOINT_URL || "https://bored-api.appbrewery.com/random");
   const [method, setMethod] = useState<REST_METHOD>(REST_METHOD.GET);
   const [name, setName] = useState(initialName);
   const { selectedWorkspace } = useWorkspaceStore();
